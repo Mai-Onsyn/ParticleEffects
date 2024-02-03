@@ -24,37 +24,34 @@ public class MathUtil {
     }
 
     public static Point[] exhaustivePosition(Point p, Vector k, boolean way, int exhaustiveCount) {
-
-
-        Vector m = new Vector(k.vx(), k.vy(), k.vz());
+        Vector m = new Vector(k.vx(), k.vy(), k.vz());//复制一份免得污染
         m.setLength(Vector.dotProduct(k, Vector.of(p)) / k.length());
-        Vector n = new Vector(p.x() - m.vx(), p.y() - m.vy(), p.z() - m.vz());
-        if (n.length() < 1e-5) n = Vector.of(p);
+        Vector n = new Vector(p.x() - m.vx(), p.y() - m.vy(), p.z() - m.vz());//上面提到的MP向量的计算
 
-        final double step = 2 * PI / exhaustiveCount;
+        if (n.length() < 1e-5) n = Vector.of(p);//注意 若QP向量本来就和k向量垂直 那么MP的模长会变成0
+
+        final double step = 2 * PI / exhaustiveCount;//旋转步进角度 只需要旋转一圈
+
         Point[] e = new Point[exhaustiveCount];
 
         for (int i = 0; i < exhaustiveCount; i++) {
-            if (way) n.rotate(k, step);
-            else n.rotate(k, -step);
+            if (way) n.rotate(k, step);//k向量垂直屏幕向外观察的顺时针方向
+            else n.rotate(k, -step);//逆时针
             e[i] = Point.of(n);
         }
         return e;
     }
 
+    //获取频域中振幅最大的波的A, w, φ
     public static double[] getMaxWave(Complex[] frequencyDomain) {
         int N = frequencyDomain.length;
         double[] amplitude = Complex.toModArray(frequencyDomain);
         return new double[] {
-                2 * max(amplitude) / N,
-                2 * PI * (double) maxIndex(amplitude) / N,
-                - arg(max(frequencyDomain))
+                2 * max(amplitude) / N,//A
+                2 * PI * (double) maxIndex(amplitude) / N,//w
+                - arg(max(frequencyDomain))//φ
         };
     }
-
-
-
-
 
     private static double max(double[] array) {
         double max = 0;

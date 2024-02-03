@@ -62,9 +62,11 @@ public class Vector {
         return new PolarVector(theta, phi, l);
     }
 
-    public void rotate(Vector k, double theta) {
-
+    public void rotate(Vector m, double theta) {
         final double length = this.length();
+
+        final Vector k = new Vector(m.vx(), m.vy(), m.vz());//复制一份免得污染
+        k.setLength(1);//k必须为单位向量
 
         final double vxT, vyT, vzT;
         final Vector cp = crossProduct(k, this);
@@ -75,21 +77,22 @@ public class Vector {
         vxT = vx * cosTheta + (1 - cosTheta) * dp * k.vx() + sinTheta * cp.vx();
         vyT = vy * cosTheta + (1 - cosTheta) * dp * k.vy() + sinTheta * cp.vy();
         vzT = vz * cosTheta + (1 - cosTheta) * dp * k.vz() + sinTheta * cp.vz();
-
-        //保证向量的模长不变
+        Vector copy = new Vector(vx, vy, vz);
 
         this.vx = vxT;
         this.vy = vyT;
         this.vz = vzT;
 
+        //保证向量的模长不变
         this.setLength(length);
     }
 
-    public void setLength(double length) {
+    public Vector setLength(double length) {
         final double ratio = length / this.length();
         this.vx *= ratio;
         this.vy *= ratio;
         this.vz *= ratio;
+        return this;
     }
 
     public static Vector plus(Vector v1, Vector v2) {
@@ -105,10 +108,11 @@ public class Vector {
     }
 
     public static Vector crossProduct(Vector v1, Vector v2) {
-        double x = v1.vy() * v2.vz() - v2.vy() * v1.vz();
-        double y = v1.vz() * v2.vx() - v2.vz() * v1.vx();
-        double z = v1.vx() * v2.vy() - v2.vx() * v1.vy();
-        return new Vector(x, y, z);
+        return new Vector(
+                v1.vy() * v2.vz() - v2.vy() * v1.vz(),
+                v1.vz() * v2.vx() - v2.vz() * v1.vx(),
+                v1.vx() * v2.vy() - v2.vx() * v1.vy()
+        );
     }
 
     public static double angle(Vector v1, Vector v2) {
@@ -128,7 +132,7 @@ public class Vector {
             cosTheta = -1;
         }
 
-        return Math.acos(cosTheta);
+        return acos(cosTheta);
     }
 
     public static PolarVector angleOnPolar(Vector v1, Vector v2) {

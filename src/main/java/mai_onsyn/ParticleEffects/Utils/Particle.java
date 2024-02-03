@@ -9,7 +9,8 @@ import java.util.UUID;
 
 public class Particle {
 
-    public static final String EXPLOSION = "explosion_emitter";
+    public static final String EXPLOSION_EMITTER = "explosion_emitter";
+    public static final String EXPLOSION = "explosion";
     public static final String BLUE_SLIME = "instant_effect";
     public static final String GREEN_SLIME = "firework";
     public static final String CROSSHAIRS = "visuality:soul";
@@ -32,7 +33,7 @@ public class Particle {
     private final int COUNT;
     private final int LIFE;
     private final Expression EXPRESSION;
-    private final String GROUP;
+    private String GROUP;
     private final double RANGE;
 
     public Particle(String name, Point position, Color color, double range, int count, int life, Expression expression, String group) {
@@ -109,6 +110,35 @@ public class Particle {
     }
 
     public Expression getExpression() {
-        return this.EXPRESSION;
+        return EXPRESSION;
+    }
+
+    public String getName() {
+        return NAME;
+    }
+
+    public Color getColor() {
+        return COLOR;
+    }
+
+    public int getCount() {
+        return COUNT;
+    }
+
+    public int getLife() {
+        return LIFE;
+    }
+
+    public String getGroup() {
+        return GROUP;
+    }
+
+    public double getRange() {
+        return RANGE;
+    }
+
+    public Particle setGroup(String group) {
+        this.GROUP = group;
+        return this;
     }
 }
