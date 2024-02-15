@@ -2,7 +2,6 @@ package mai_onsyn.ParticleEffects.EffectUtils;
 
 import mai_onsyn.ParticleEffects.Effects.Continuous.CatmullRom;
 import mai_onsyn.ParticleEffects.Effects.Effect;
-import mai_onsyn.ParticleEffects.Static;
 import mai_onsyn.ParticleEffects.Utils.Math.Point;
 import mai_onsyn.ParticleEffects.Utils.Particle;
 
@@ -12,44 +11,34 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import static mai_onsyn.ParticleEffects.Static.*;
 
 public class PositionTimeline {
 
     private final List<Point> sequence;
-
     private final List<Integer> ticks;
-
     private final String name;
-
     private final String player;
-
+    private final String namespace;
+    private final String target;
+    private final String scoreboard;
     private final File path;
-
     private List<Point> fullTimeLine;
 
-    private int tps;
-
-    public PositionTimeline(String name, String player, File path, int tps) {
+    public PositionTimeline(String name, String player, File path, String namespace, String scoreboard, String target) {
         this.sequence = new ArrayList<>();
         this.ticks = new ArrayList<>();
         this.fullTimeLine = new ArrayList<>();
-        this.tps = tps;
         this.name = name;
         this.player = player;
+        this.namespace = namespace;
+        this.scoreboard = scoreboard;
+        this.target = target;
         this.path = path;
     }
 
     public void add(int tick, double x, double y, double z) {
         sequence.add(new Point(x, y, z));
         ticks.add(tick);
-    }
-
-    public void setTps(int tps) {
-        this.tps = tps;
     }
 
     public List<Point> getSequence() {
@@ -77,11 +66,11 @@ public class PositionTimeline {
                 try (FileWriter fi = new FileWriter(new File(outputMainFolder, i + "_" + end + ".mcfunction"))) {
 
                     for (int j = 0; j < sublist.size(); j++) {
-                        fi.write(String.format("execute if score %s %s matches %d run tp %s %.2f %.2f %.2f", TARGET, SCOREBOARD, i + j, this.player, sublist.get(j).x(), sublist.get(j).y(), sublist.get(j).z()));
+                        fi.write(String.format("execute if score %s %s matches %d run tp %s %.2f %.2f %.2f", this.target, this.scoreboard, i + j, this.player, sublist.get(j).x(), sublist.get(j).y(), sublist.get(j).z()));
                         fi.write("\n");
                     }
                 }
-                run.write(String.format("execute if score %s %s matches %d..%d run function %s:%s/%s", TARGET, SCOREBOARD, i, end, NAMESPACE, this.name.toLowerCase(), i + "_" + end));
+                run.write(String.format("execute if score %s %s matches %d..%d run function %s:%s/%s", this.target, this.scoreboard, i, end, this.namespace, this.name.toLowerCase(), i + "_" + end));
                 run.write("\n");
             }
 
@@ -100,8 +89,8 @@ public class PositionTimeline {
         Effect catmullRom = new CatmullRom(Timeline.of(this), sequence.getFirst(), sequence.getLast(), 64, new Particle(null, null, new Color(0)));
         List<List<Particle>> lists = catmullRom.gettimeline().getSequence();
 
-        for (int i = 0; i < lists.size(); i++) {
-            timeline.add(lists.get(i).get(0).getPosition());
+        for (List<Particle> list : lists) {
+            timeline.add(list.get(0).getPosition());
         }
         timeline.add(sequence.getLast());
 

@@ -42,7 +42,24 @@ public class MathUtil {
         return e;
     }
 
-    //获取频域中振幅最大的波的A, w, φ
+    public static double[] parseWave(double[] data) {
+        int N = data.length;
+        double A = 0;
+        int maxIndex = -1;
+        for (int i = 0; i < N; i++) {
+            if (data[i] > A) {
+                A = data[i];
+                maxIndex = i;
+            }
+        }
+        double phi = 2 * PI - ((maxIndex - N * 0.25 < 0) ? maxIndex + N * 0.75 : maxIndex - N * 0.25) / N * 2 * PI;
+        return new double[] {A, phi};
+    }
+
+}
+
+/*
+//获取频域中振幅最大的波的A, w, φ
     public static double[] getMaxWave(Complex[] frequencyDomain) {
         int N = frequencyDomain.length;
         double[] amplitude = Complex.toModArray(frequencyDomain);
@@ -80,43 +97,4 @@ public class MathUtil {
         }
         return index;
     }
-}
-
-
-/*
-
-            for (int axis = 0; axis < 3; axis++) {
-                Vector spinner = n;
-                spinner.rotate(k, maxAngleInterval[axis][0]);
-                double step = (maxAngleInterval[axis][1] - maxAngleInterval[axis][0]) / exhaustiveStep;
-                double maxD = maxAngleInterval[axis][0];
-                for (int i = 0; i < exhaustiveStep; i++) {
-                    spinner.rotate(k, step);
-                    double[] heft = new double[] {spinner.vx(), spinner.vy(), spinner.vz()};
-                    if (heft[axis] > max[axis]) {
-                        max[axis] = heft[axis];
-                        maxD = i * step + maxAngleInterval[axis][0];
-                    }
-                }
-                maxAngleInterval[axis][0] = maxD - step;
-                maxAngleInterval[axis][1] = maxD + step;
-            }
-
-            for (int axis = 0; axis < 3; axis++) {
-                Vector spinner = n;
-                spinner.rotate(k, minAngleInterval[axis][0]);
-                double step = (minAngleInterval[axis][1] - minAngleInterval[axis][0]) / exhaustiveStep;
-                double minD = minAngleInterval[axis][0];
-                for (int i = 0; i < exhaustiveStep; i++) {
-                    spinner.rotate(k, step);
-                    double[] heft = new double[] {spinner.vx(), spinner.vy(), spinner.vz()};
-                    if (heft[axis] < min[axis]) {
-                        min[axis] = heft[axis];
-                    }
-                }
-
-                minAngleInterval[axis][0] = minD - step;
-                minAngleInterval[axis][1] = minD + step;
-            }
-
  */

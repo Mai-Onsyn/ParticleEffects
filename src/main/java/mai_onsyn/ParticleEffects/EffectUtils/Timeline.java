@@ -10,32 +10,39 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mai_onsyn.ParticleEffects.Static.*;
-
 public class Timeline {
     private final File FUNCTION_PATH;
     private final int COMMANDS_PER_FUNCTION;
     private final int START_INDEX;
     private final String NAME;
+    private final String NAMESPACE;
+    private final String TARGET;
+    private final String SCOREBOARD;
     private final List<List<Particle>> sequence;
     private final List<List<String>> cmdSequence;
 
     //主要时间线格式
-    public Timeline(String name, File path, int count, int startIndex) {
+    public Timeline(String name, File path, int count, int startIndex, String namespace, String scoreboard, String target) {
         this.NAME = name;
         this.FUNCTION_PATH = path;
         this.COMMANDS_PER_FUNCTION = count;
         this.START_INDEX = startIndex;
+        this.NAMESPACE = namespace;
+        this.SCOREBOARD = scoreboard;
+        this.TARGET = target;
         this.sequence = new ArrayList<>();
         this.cmdSequence = new ArrayList<>();
     }
 
     //图形使用格式 用于添加到主时间线
     public Timeline() {
-        this.NAME = "";
+        this.NAME = null;
         this.FUNCTION_PATH = null;
         this.COMMANDS_PER_FUNCTION = 0;
         this.START_INDEX = 0;
+        this.NAMESPACE = null;
+        this.SCOREBOARD = null;
+        this.TARGET = null;
         this.sequence = new ArrayList<>();
         this.cmdSequence = new ArrayList<>();
     }
@@ -73,6 +80,9 @@ public class Timeline {
     }
 
     public void write() {
+
+        if (this.NAME == null) throw new RuntimeException("Not main timeline!");
+
         final int ticks = sequence.size();//总大小
         List<List<String>> totalCommands = new ArrayList<>(ticks);
         while (totalCommands.size() <= ticks) totalCommands.add(new ArrayList<>());
@@ -111,7 +121,7 @@ public class Timeline {
                             writer.write("\n");
                         }
                     }
-                    run.write(String.format("execute if score %s %s matches %d run function %s:%s/tick_%d/%d", TARGET, SCOREBOARD, tick + this.START_INDEX, NAMESPACE, this.NAME.toLowerCase(), tick, i));
+                    run.write(String.format("execute if score %s %s matches %d run function %s:%s/tick_%d/%d", this.TARGET, this.SCOREBOARD, tick + this.START_INDEX, this.NAMESPACE, this.NAME.toLowerCase(), tick, i));
                     run.write("\n");
                 }
             }

@@ -1,8 +1,11 @@
 package mai_onsyn.ParticleEffects.EffectUtils;
 
 import mai_onsyn.ParticleEffects.Effects.Effect;
+import mai_onsyn.ParticleEffects.ScatterChartGenerator;
 import mai_onsyn.ParticleEffects.Utils.*;
 import mai_onsyn.ParticleEffects.Utils.Math.*;
+
+import java.util.Arrays;
 
 import static java.lang.Math.*;
 
@@ -21,6 +24,7 @@ public class ExpressionUtil {
     }
 
 
+    //香草的粒子平移方案 带空气阻力
     public static void addTranslationResist(Effect effect, Vector v) {
         effect.gettimeline().getSequence().forEach(sub -> sub.forEach(particle -> {
             addTranslationResist(particle, v);
@@ -39,6 +43,33 @@ public class ExpressionUtil {
         }));
     }
 
+    public static void addRotation(Particle particle, Point o, Vector m, boolean way, double omega) {
+        way = !way;
+        Vector k = new Vector(m.vx(), m.vy(), m.vz());//旋转向量复制一份免得污染
+        k.setLength(1);//向量模长设为1 免得后面旋转速度不匹配
+        Point position = particle.getPosition();
+        position = Point.of(Vector.of(o, position));//向量OP
+        int eCount = 1024;//旋转一圈割圆分数
+
+        Point[] round = MathUtil.exhaustivePosition(position, k, way, eCount);//穷举得到圆周上的点
+        double[] ax = new double[eCount], ay = new double[eCount], az = new double[eCount];
+        for (int i = 0; i < eCount - 1; i++) {
+            ax[i] = (round[i+1].x() - round[i].x()) / (2 * PI / eCount);
+            ay[i] = (round[i+1].y() - round[i].y()) / (2 * PI / eCount);
+            az[i] = (round[i+1].z() - round[i].z()) / (2 * PI / eCount);
+        }
+
+        double[] xWave = MathUtil.parseWave(ax);
+        double[] yWave = MathUtil.parseWave(ay);
+        double[] zWave = MathUtil.parseWave(az);
+        //ScatterChartGenerator.show(ax);
+
+        particle.getExpression().addVx(String.format("1/(1+E^(-128*(t-0.5)))*%.10f*sin(" + omega + "*t+%.10f)", xWave[0]*omega, xWave[1]));
+        particle.getExpression().addVy(String.format("1/(1+E^(-128*(t-0.5)))*%.10f*sin(" + omega + "*t+%.10f)", yWave[0]*omega, yWave[1]));
+        particle.getExpression().addVz(String.format("1/(1+E^(-128*(t-0.5)))*%.10f*sin(" + omega + "*t+%.10f)", zWave[0]*omega, zWave[1]));
+    }
+
+    /*
     //参数：particle:要旋转的粒子; o:旋转轴向量的起点; m:旋转轴向量; way:旋转方向; omega:旋转角速度
     public static void addRotation(Particle particle, Point o, Vector m, boolean way, double omega) {
         Vector k = new Vector(m.vx(), m.vy(), m.vz());//旋转向量复制一份免得污染
@@ -69,4 +100,5 @@ public class ExpressionUtil {
         particle.getExpression().addVy(String.format("-%.10f*cos(%.10f*t+%.10f)", yWave[0]*omegaFactor, yWave[1]*omegaFactor, yWave[2]));
         particle.getExpression().addVz(String.format("-%.10f*cos(%.10f*t+%.10f)", zWave[0]*omegaFactor, zWave[1]*omegaFactor, zWave[2]));
     }
+     */
 }

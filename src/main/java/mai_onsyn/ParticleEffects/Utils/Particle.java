@@ -110,7 +110,7 @@ public class Particle {
     }
 
     public Expression getExpression() {
-        return EXPRESSION;
+        return this.EXPRESSION;
     }
 
     public String getName() {

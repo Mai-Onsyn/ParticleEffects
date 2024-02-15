@@ -74,7 +74,6 @@ public class CatmullRom implements Effect {
             double t = i * lambda;
 
             //套方程式计算插值点的坐标
-            ;
             this.timeline.add((int) ((double) i / n * duration) + startTick, new Particle(sample.getName(),
                     new Point(
                             (pow(t, 3) * (-alpha * P0.x() + (2 - alpha) * P1.x() + (alpha - 2) * P2.x() + alpha * P3.x()) + pow(t, 2) * (2 * alpha * P0.x() + (alpha - 3) * P1.x() + (3 - 2 * alpha) * P2.x() - alpha * P3.x()) + t * (-alpha * P0.x() + alpha * P2.x()) + P1.x()),
