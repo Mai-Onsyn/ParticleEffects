@@ -28,7 +28,7 @@ public class Particle {
 
 
     private final String NAME;
-    private final mai_onsyn.ParticleEffects.Utils.Math.Point POSITION;
+    private mai_onsyn.ParticleEffects.Utils.Math.Point POSITION;
     private final Color COLOR;
     private final int COUNT;
     private final int LIFE;
@@ -139,6 +139,11 @@ public class Particle {
 
     public Particle setGroup(String group) {
         this.GROUP = group;
+        return this;
+    }
+
+    public Particle setPosition(Point position) {
+        this.POSITION = position;
         return this;
     }
 }

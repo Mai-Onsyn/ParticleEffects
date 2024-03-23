@@ -73,11 +73,11 @@ public class Vector {
         final double dp = dotProduct(k, this);
         final double sinTheta = sin(theta);
         final double cosTheta = cos(theta);
+        //System.out.println(cp);
         
         vxT = vx * cosTheta + (1 - cosTheta) * dp * k.vx() + sinTheta * cp.vx();
         vyT = vy * cosTheta + (1 - cosTheta) * dp * k.vy() + sinTheta * cp.vy();
         vzT = vz * cosTheta + (1 - cosTheta) * dp * k.vz() + sinTheta * cp.vz();
-        Vector copy = new Vector(vx, vy, vz);
 
         this.vx = vxT;
         this.vy = vyT;
@@ -93,6 +93,15 @@ public class Vector {
         this.vy *= ratio;
         this.vz *= ratio;
         return this;
+    }
+
+    public static Vector multiply(Vector v, double a) {
+
+        return new Vector(
+                v.vx() * a,
+                v.vy() * a,
+                v.vz() * a
+        );
     }
 
     public static Vector plus(Vector v1, Vector v2) {

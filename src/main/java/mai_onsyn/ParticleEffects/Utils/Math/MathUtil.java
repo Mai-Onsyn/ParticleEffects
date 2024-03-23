@@ -4,23 +4,13 @@ import static java.lang.Math.*;
 
 public class MathUtil {
 
-    public static double[] get_Delta_XYZ_In_3D_Circle(Vector k, double r) {
-        final int exhaustiveCount = 1048576;
-        final Vector n = k.getNormalVector().polarMode().setLength(r).toVector();
-
-        final double step = 2 * PI / exhaustiveCount;
-        double x = 0;
-        double y = 0;
-        double z = 0;
-
-        for (int e = 0; e < exhaustiveCount; e++) {
-            n.rotate(k, step);
-            if (n.vx() > x) x = n.vx();
-            if (n.vy() > y) y = n.vy();
-            if (n.vz() > z) z = n.vz();
+    public static double atan3(double sin, double cos) {
+        if (sin >= 0) {
+            return acos(cos) + PI;//0~π
         }
-
-        return new double[] {x * 2, y * 2, z * 2};
+        else {
+            return PI - acos(cos);//π~2π
+        }
     }
 
     public static Point[] exhaustivePosition(Point p, Vector k, boolean way, int exhaustiveCount) {
