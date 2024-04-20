@@ -1,16 +1,18 @@
 package mai_onsyn.ParticleEffects.EffectUtils;
 
 import mai_onsyn.ParticleEffects.Effects.Effect;
+import mai_onsyn.ParticleEffects.Utils.Expression;
 import mai_onsyn.ParticleEffects.Utils.Math.Point;
 import mai_onsyn.ParticleEffects.Utils.Particle;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Timeline {
+public class Timeline implements Effect {
     private final File FUNCTION_PATH;
     private final int COMMANDS_PER_FUNCTION;
     private final int START_INDEX;
@@ -69,7 +71,7 @@ public class Timeline {
         while (cmdSequence.size() <= tick) this.cmdSequence.add(new ArrayList<>());
         while (sequence.size() <= tick) this.sequence.add(new ArrayList<>());
 
-        this.sequence.get(tick).add(new Particle(null, point, null, 0, 0, 0, null, null));
+        this.sequence.get(tick).add(new Particle(Particle.END_ROD, point, Color.RED, 0, 1, -1, new Expression(), "null"));
     }
 
     public void add(int tick, String command) {
@@ -135,6 +137,18 @@ public class Timeline {
         return this.sequence;
     }
 
+    public List<List<Point>> getAsPointSequence() {
+        List<List<Point>> p = new ArrayList<>(this.sequence.size());
+
+        for (int i = 0; i < this.sequence.size(); i++) {
+            p.add(new ArrayList<>(this.sequence.get(i).size()));
+            for (int j = 0; j < this.sequence.get(i).size(); j++) {
+                p.get(i).add(this.sequence.get(i).get(j).getPosition());
+            }
+        }
+        return p;
+    }
+
     public int totalCount() {
         int count = 0;
         for (List<Particle> sub : sequence) {
@@ -149,5 +163,10 @@ public class Timeline {
             timeline.add(ptl.getTicks().get(i), ptl.getSequence().get(i));
         }
         return timeline;
+    }
+
+    @Override
+    public Timeline gettimeline() {
+        return this;
     }
 }
