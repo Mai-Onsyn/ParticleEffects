@@ -9,13 +9,13 @@ import java.util.Objects;
 
 public class Filter {
 
-    public static void filterClose(Effect effect) {
+    public static void filterSame(Effect effect) {
         for (int i = 0; i < effect.gettimeline().getSequence().size(); i++) {
             List<Particle> temp = new ArrayList<>();
             for (int j = 0; j < effect.gettimeline().getSequence().get(i).size(); j++) {
 
-                for (int k = 0; k < temp.size(); k++) {
-                    if (Objects.equals(effect.gettimeline().getSequence().get(i).get(j), temp.get(k))) {
+                for (Particle particle : temp) {
+                    if (Objects.equals(effect.gettimeline().getSequence().get(i).get(j), particle)) {
                         effect.gettimeline().getSequence().get(i).remove(j);
                     }
                 }

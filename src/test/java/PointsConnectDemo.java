@@ -8,6 +8,7 @@ import mai_onsyn.ParticleEffects.Utils.Particle;
 import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 
 public class PointsConnectDemo {
 
@@ -15,7 +16,7 @@ public class PointsConnectDemo {
 
     public static void main(String[] args) {
 
-        Point[] pl1 = new Point[] {
+        Point[] pl1a = new Point[] {
                 new Point(100, 15, 0),
                 new Point(103, 14, 4),
                 new Point(102, 16, 2),
@@ -23,7 +24,7 @@ public class PointsConnectDemo {
                 new Point(100, 14, 2)
         };
 
-        Point[] pl2 = new Point[] {
+        Point[] pl2a = new Point[] {
                 new Point(106, 19, 0),
                 new Point(103, 20, 5),
                 new Point(108, 19, 9),
@@ -33,10 +34,23 @@ public class PointsConnectDemo {
                 new Point(104, 23, 6)
         };
 
+        Point[] pl1 = new Point[10];
+        Point[] pl2 = new Point[14];
+        Random random = new Random(1919810);
+
+        for (int i = 0; i < 10; i++) {
+            pl1[i] = new Point(random.nextDouble() * 10 - 5, random.nextDouble() * 10 + 100, random.nextDouble() * 10 - 5);
+        }
+        for (int i = 0; i < 14; i++) {
+            pl2[i] = new Point(random.nextDouble() * 10 - 5, random.nextDouble() * 10 + 110, random.nextDouble() * 10 - 5);
+        }
+
         int[][] connectList = MathUtil.genConnectList(pl1, pl2);
 
         for (int i = 0; i < connectList.length; i++) {
-            System.out.println(Arrays.toString(connectList[i]));
+            Effect line = new Straight(pl1[connectList[i][0]], pl2[connectList[i][1]], 8, new Particle(Particle.END_ROD, new Point(0, 0, 0), Color.WHITE));
+            timeline.add(0, line);
         }
+        timeline.write();
     }
 }
